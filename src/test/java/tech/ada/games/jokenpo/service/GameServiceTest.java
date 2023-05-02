@@ -49,13 +49,10 @@ class GameServiceTest {
         final Player player1 = this.buildPlayer(1L, playerUsername1);
         final Player player2 = this.buildPlayer(2L, playerUsername2);
         final Game game = this.buildGame(player1);
-        // TODO How to mock a static method?
-        try (MockedStatic<SecurityUtils> securityUtils = Mockito.mockStatic(SecurityUtils.class)) {
-            securityUtils.when(SecurityUtils::getCurrentUserLogin).thenReturn(playerUsername1);
-        }
-//        when(playerRepository.findByUsername(playerUsername1))
-//                .thenReturn(Optional.of(player1));
-        when(playerRepository.findByUsername(null))
+        MockedStatic<SecurityUtils> mockStatic = Mockito.mockStatic(SecurityUtils.class);
+        mockStatic.when(SecurityUtils::getCurrentUserLogin)
+                .thenReturn(playerUsername1);
+        when(playerRepository.findByUsername(playerUsername1))
                 .thenReturn(Optional.of(player1));
         when(playerRepository.findById(1L))
                 .thenReturn(Optional.of(player1));
@@ -68,8 +65,7 @@ class GameServiceTest {
         assertDoesNotThrow(() -> service.newGame(gameDto));
 
         // Then (Assert)
-        //verify(playerRepository, times(1)).findByUsername(playerUsername1);
-        verify(playerRepository, times(1)).findByUsername(null);
+        verify(playerRepository, times(1)).findByUsername(playerUsername1);
         verify(gameRepository, times(1)).save(any());
         verify(playerRepository, times(1)).findById(1L);
         verify(playerRepository, times(1)).findById(2L);
