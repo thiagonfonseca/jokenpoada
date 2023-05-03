@@ -7,9 +7,7 @@ import org.mockito.Mockito;
 import tech.ada.games.jokenpo.dto.GameDto;
 import tech.ada.games.jokenpo.dto.GameMoveDto;
 import tech.ada.games.jokenpo.exception.DataNotFoundException;
-import tech.ada.games.jokenpo.model.Game;
-import tech.ada.games.jokenpo.model.Player;
-import tech.ada.games.jokenpo.model.Role;
+import tech.ada.games.jokenpo.model.*;
 import tech.ada.games.jokenpo.repository.GameRepository;
 import tech.ada.games.jokenpo.repository.MoveRepository;
 import tech.ada.games.jokenpo.repository.PlayerMoveRepository;
@@ -82,10 +80,30 @@ class GameServiceTest {
         final Long playerId = 1L;
         final String playerUsername1 = "player1";
         final Player player1 = this.buildPlayer(1L, playerUsername1);
-        when(playerRepository.findByUsername(null)).thenReturn(Optional.of(player1));
+
+        MockedStatic<SecurityUtils> mockStatic = Mockito.mockStatic(SecurityUtils.class);
+        mockStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(playerUsername1);
+        when(playerRepository.findByUsername(playerUsername1)).thenReturn(Optional.of(player1));
 
         final Game game = this.buildGame(player1);
         when(gameRepository.findById(gameId)).thenReturn(Optional.of(game));
+
+        final Move move = new Move();
+        move.setId(moveId);
+        move.setMove("Tesoura");
+        when(moveRepository.findById(gameMoveDto.getMoveId())).thenReturn(Optional.of(move));
+
+        PlayerMove playerMove = new PlayerMove(1L, game, player1, move);
+        when(playerMoveRepository.findByUnfinishedGameIdAndPlayer(player1.getId(), gameMoveDto.getGameId())).thenReturn(Optional.of(playerMove));
+        when(playerMoveRepository.save(playerMove)).thenReturn(playerMove);
+        when(playerMoveRepository.countMovesPlayedByUnfinishedGame(game.getId())).thenReturn(1L);
+        // TODO see insertPlayerMove. It seems to be wrong.
+        //when(playerMoveRepository.countMovesPlayedByUnfinishedGame(game.getId())).thenReturn(1);
+        when(playerMoveRepository.existsSpockByUnfinishedGameId(gameId)).thenReturn(false);
+        when(playerMoveRepository.existsTesouraByUnfinishedGameId(gameId)).thenReturn(true);
+        when(playerMoveRepository.existsPapelByUnfinishedGameId(gameId)).thenReturn(false);
+        when(playerMoveRepository.existsPedraByUnfinishedGameId(gameId)).thenReturn(false);
+        when(playerMoveRepository.existsLagartoByUnfinishedGameId(gameId)).thenReturn(false);
 
         // When (Act)
 
