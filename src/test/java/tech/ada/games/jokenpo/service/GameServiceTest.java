@@ -1,5 +1,6 @@
 package tech.ada.games.jokenpo.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -28,6 +29,7 @@ class GameServiceTest {
     private MoveRepository moveRepository;
     private PlayerRepository playerRepository;
     private GameService service;
+    private MockedStatic<SecurityUtils> mockStatic;
 
     @BeforeEach
     void setUp() {
@@ -36,6 +38,12 @@ class GameServiceTest {
         this.moveRepository = mock(MoveRepository.class);
         this.playerRepository = mock(PlayerRepository.class);
         this.service = new GameService(gameRepository, playerMoveRepository, moveRepository, playerRepository);
+        this.mockStatic = Mockito.mockStatic(SecurityUtils.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        this.mockStatic.close();
     }
 
     @Test
@@ -47,7 +55,6 @@ class GameServiceTest {
         final Player player1 = this.buildPlayer(1L, playerUsername1);
         final Player player2 = this.buildPlayer(2L, playerUsername2);
         final Game game = this.buildGame(player1);
-        MockedStatic<SecurityUtils> mockStatic = Mockito.mockStatic(SecurityUtils.class);
         mockStatic.when(SecurityUtils::getCurrentUserLogin)
                 .thenReturn(playerUsername1);
         when(playerRepository.findByUsername(playerUsername1))
@@ -81,7 +88,6 @@ class GameServiceTest {
         final String playerUsername1 = "player1";
         final Player player1 = this.buildPlayer(1L, playerUsername1);
 
-        MockedStatic<SecurityUtils> mockStatic = Mockito.mockStatic(SecurityUtils.class);
         mockStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(playerUsername1);
         when(playerRepository.findByUsername(playerUsername1)).thenReturn(Optional.of(player1));
 
