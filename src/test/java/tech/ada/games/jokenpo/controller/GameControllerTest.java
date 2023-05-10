@@ -3,17 +3,13 @@ package tech.ada.games.jokenpo.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.ada.games.jokenpo.dto.GameDto;
@@ -41,8 +37,8 @@ class GameControllerTest extends BaseGameTest {
     private final String baseUri = "/api/v1/jokenpo/game";
     private AuthResponse authResponse;
 
-    @Autowired
-    private DataSource dataSource; // application.properties
+//    @Autowired
+//    private DataSource dataSource; // application.properties
 
 //    @Autowired
 //    private WebApplicationContext context;
@@ -58,13 +54,16 @@ class GameControllerTest extends BaseGameTest {
         this.populateDatabase();
     }
 
-    @AfterEach
-    void finish() {
-        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.setContinueOnError(false);
-        populator.addScript(new ClassPathResource("drop_database.sql"));
-        DatabasePopulatorUtils.execute(populator, dataSource);
-    }
+//    @AfterEach
+//    void finish() {
+//        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//        populator.setContinueOnError(false);
+//        populator.addScript(new ClassPathResource("drop_database.sql"));
+//        DatabasePopulatorUtils.execute(populator, dataSource);
+        // ddl-auto= create-drop" means that when the server is run,
+        // the database(table) instance is created. And whenever the server stops,
+        // the database table instance is droped.
+//    }
 
     @Test
     void newGameTest() throws Exception {

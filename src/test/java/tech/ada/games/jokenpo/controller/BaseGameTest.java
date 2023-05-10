@@ -131,15 +131,14 @@ abstract class BaseGameTest {
     }
 
     protected GameMoveDto buildGameMoveDto(Long gameId, Long moveId) {
-        final GameMoveDto gameDto = GameMoveDto.builder()
+        return GameMoveDto.builder()
                 .gameId(gameId)
                 .moveId(moveId)
                 .build();
-        return gameDto;
     }
 
-    protected void dropGames() {
-        service.deleteAll();
-    }
+//    protected void dropGames() {
+//        service.deleteAll();
+//    }
 
 }
