@@ -3,6 +3,8 @@ package tech.ada.games.jokenpo.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +24,6 @@ class PlayerControllerTest extends BaseTests {
     private final String baseUri = "/api/v1/jokenpo/player";
     private AuthResponse authResponse;
 
-
     @BeforeEach
     void beforeAll() {
         this.populateDatabase();
@@ -31,7 +32,7 @@ class PlayerControllerTest extends BaseTests {
 
     @Test
     void createPlayerTest() throws Exception {
-        PlayerDto player = new PlayerDto().builder()
+        PlayerDto player = PlayerDto.builder()
             .name("player1")
             .username("username1")
             .password("1234")
@@ -65,7 +66,7 @@ class PlayerControllerTest extends BaseTests {
     @Test
     void findPlayersByNameTest() throws Exception {
 
-        final MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.get(baseUri + "/player1")
+        final MockHttpServletResponse response = mvc.perform(get(baseUri + "/player1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", authResponse.getAccessToken()))
                 .andDo(print())
@@ -75,18 +76,17 @@ class PlayerControllerTest extends BaseTests {
         assertNotNull(response.getContentAsString());
     }
  
-    // @Test
-    // void deletePlayerTest() throws Exception {
+     @Test
+     void deletePlayerWithSuccessTest() throws Exception {
 
-    //     final MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.delete(baseUri + "/1")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .header("Authorization", authResponse.getAccessToken()))
-    //             .andDo(print())
-    //             .andReturn().getResponse();
+         final MockHttpServletResponse response = mvc.perform(delete(baseUri + "/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .header("Authorization", authResponse.getAccessToken()))
+                 .andDo(print())
+                 .andReturn().getResponse();
 
-    //     assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
-    // }
-
+         assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
+     }
 
     private String asJsonString(final Object obj) {
         try {
