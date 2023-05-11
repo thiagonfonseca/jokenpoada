@@ -6,6 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.web.servlet.MockMvc;
 import tech.ada.games.jokenpo.dto.*;
 import tech.ada.games.jokenpo.exception.BadRequestException;
@@ -20,6 +23,7 @@ import tech.ada.games.jokenpo.service.GameService;
 import tech.ada.games.jokenpo.service.MoveService;
 import tech.ada.games.jokenpo.service.PlayerService;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,9 @@ abstract class AbstractBaseTest {
 
     @Autowired
     protected AuthService authService;
+
+    @Autowired
+    private DataSource dataSource; // application.properties
 
     protected void populateDatabase() {
         this.buildPlayers(5);
@@ -178,6 +185,14 @@ abstract class AbstractBaseTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // SCRIPTS
+    protected void executeScript(final String scriptName) {
+        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.setContinueOnError(false);
+        populator.addScript(new ClassPathResource(scriptName));
+        DatabasePopulatorUtils.execute(populator, dataSource);
     }
 
 }
