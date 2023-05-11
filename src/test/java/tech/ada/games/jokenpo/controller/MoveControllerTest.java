@@ -1,10 +1,5 @@
 package tech.ada.games.jokenpo.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,16 +9,17 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import tech.ada.games.jokenpo.dto.MoveDto;
 import tech.ada.games.jokenpo.response.AuthResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class MoveControllerTest extends BaseTests {
+class MoveControllerTest extends AbstractBaseTest {
 
     private final String baseUri = "/api/v1/jokenpo/move";
     private AuthResponse authResponse;
@@ -36,7 +32,7 @@ class MoveControllerTest extends BaseTests {
 
     @Test
     void createMoveTest() throws Exception {
-        MoveDto move = new MoveDto().builder().move("JOGADA SPOCK").build();
+        MoveDto move = MoveDto.builder().move("JOGADA SPOCK").build();
 
         final MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.post(baseUri)
                 .content(asJsonString(move))
@@ -74,14 +70,6 @@ class MoveControllerTest extends BaseTests {
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
 
-    }
-
-    private String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

@@ -1,5 +1,8 @@
 package tech.ada.games.jokenpo.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +11,7 @@ import tech.ada.games.jokenpo.dto.*;
 import tech.ada.games.jokenpo.exception.BadRequestException;
 import tech.ada.games.jokenpo.exception.DataConflictException;
 import tech.ada.games.jokenpo.exception.DataNotFoundException;
+import tech.ada.games.jokenpo.model.Game;
 import tech.ada.games.jokenpo.model.Move;
 import tech.ada.games.jokenpo.model.Player;
 import tech.ada.games.jokenpo.response.AuthResponse;
@@ -22,7 +26,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-abstract class BaseGameTest {
+abstract class AbstractBaseTest {
 
     @Autowired
     protected MockMvc mvc;
@@ -137,8 +141,43 @@ abstract class BaseGameTest {
                 .build();
     }
 
-//    protected void dropGames() {
-//        service.deleteAll();
-//    }
+    // OBJECT MAPPER
+    protected String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected List<Game> asGameListObject(final String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(json, new TypeReference<List<Game>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected Game asGameObject(final String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(json, Game.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected ResultDto asResultDtoObject(final String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(json, ResultDto.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
