@@ -80,7 +80,7 @@ class MoveControllerTest extends AbstractBaseTest {
 
     @Test
     void findAllMovesNotFoundTest() throws Exception {
-        this.executeScript("delete_moves.sql");
+        this.executeScript("scripts/delete_moves.sql");
         final MvcResult result = mvc.perform(MockMvcRequestBuilders.get(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", authResponse.getAccessToken()))

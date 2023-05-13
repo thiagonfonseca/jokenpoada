@@ -112,7 +112,7 @@ class PlayerControllerTest extends AbstractBaseTest {
  
      @Test
      void deletePlayerWithSuccessTest() throws Exception {
-         this.executeScript("delete_games.sql");
+         this.executeScript("scripts/delete_games.sql");
          final MockHttpServletResponse response = mvc.perform(delete(baseUri + "/1")
                  .contentType(MediaType.APPLICATION_JSON)
                  .header("Authorization", authResponse.getAccessToken()))
